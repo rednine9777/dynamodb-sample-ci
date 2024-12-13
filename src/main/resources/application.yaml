@@ -1,0 +1,37 @@
+# spring.application.name=demo
+# aws.dynamodb.endpoint=http://localhost:8000
+# aws.region=ap-northeast-2
+# logging.level.com.example.demo=INFO
+
+
+# # application-docker.properties
+# aws.region=ap-northeast-2
+# aws.iam.role=arn:aws:iam::123456789012:role/YourOIDCConnectedRole
+# aws.oidc.provider=https://oidc.eks.ap-northeast-2.amazonaws.com/id/<oidc-id>
+
+
+# docker run -p 8080:8080 \
+#   -v ~/.aws:/root/.aws:ro \
+#   -e SPRING_PROFILES_ACTIVE=docker \
+#   test-app
+
+
+
+spring:
+  application:
+    name: demo
+  profiles:
+    active: default
+
+aws:
+  region: ap-northeast-2
+  iam:
+    role: arn:aws:iam::123456789012:role/YourOIDCConnectedRole
+  oidc:
+    provider: https://oidc.eks.ap-northeast-2.amazonaws.com/id/<oidc-id>
+
+logging:
+  level:
+    com.example.demo: INFO
+
+
