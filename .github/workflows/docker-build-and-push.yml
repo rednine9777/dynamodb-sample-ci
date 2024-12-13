@@ -8,7 +8,7 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  AWS_ECR_REPO: ${{ github.repository }} 
+  AWS_ECR_REPO: dynamodb-sample-ci-repo
 
 jobs:
   build-and-push:
