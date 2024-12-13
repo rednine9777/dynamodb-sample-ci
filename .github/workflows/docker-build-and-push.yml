@@ -1,0 +1,46 @@
+name: Docker Build and Push
+
+on:
+  push:
+    tags:
+      - '*'  
+
+
+env:
+  AWS_REGION: ap-northeast-2
+  AWS_ECR_REPO: ${{ github.repository }} 
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ env.AWS_REGION }} 
+        role-to-assume: arn:aws:iam::533267056938:role/github-actions-ci 
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Extract tag name
+      id: extract_tag
+      shell: bash
+      run: echo "IMAGE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+    - name: echo image tag
+      run: echo $IMAGE_TAG
+
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        push: true
+        tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.AWS_ECR_REPO }}:${{ env.IMAGE_TAG }}

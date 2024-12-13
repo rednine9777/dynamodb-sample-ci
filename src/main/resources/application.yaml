@@ -17,21 +17,62 @@
 
 
 
+# spring:
+#   application:
+#     name: demo
+#   profiles:
+#     active: default
+
+# aws:
+#   region: ap-northeast-2
+#   iam:
+#     role: arn:aws:iam::123456789012:role/YourOIDCConnectedRole
+#   oidc:
+#     provider: https://oidc.eks.ap-northeast-2.amazonaws.com/id/<oidc-id>
+
+# logging:
+#   level:
+#     com.example.demo: INFO
+
+
 spring:
   application:
     name: demo
   profiles:
-    active: default
+    active: local  # 기본 프로파일은 local
 
 aws:
-  region: ap-northeast-2
-  iam:
-    role: arn:aws:iam::123456789012:role/YourOIDCConnectedRole
-  oidc:
-    provider: https://oidc.eks.ap-northeast-2.amazonaws.com/id/<oidc-id>
+  region: ap-northeast-2  # 공통 설정
+  dynamodb:
+    endpoint: https://dynamodb.ap-northeast-2.amazonaws.com  # 공통 설정
+  profile: rednine  # 로컬 및 Docker 기본값
 
 logging:
   level:
-    com.example.demo: INFO
+    com.example.demo: INFO  # 공통 설정
 
+---
+# 도커 프로파일 설정
+spring:
+  config:
+    activate:
+      on-profile: docker
+aws:
+  profile: rednine  # Docker에서 사용할 AWS 프로파일
+  iam:
+    role: ""  # Docker 환경에서는 OIDC 사용 안 함
+  oidc:
+    provider: ""
 
+---
+# CI 프로파일 설정
+spring:
+  config:
+    activate:
+      on-profile: ci
+aws:
+  profile: github-actions  # GitHub Actions 환경에서는 OIDC 사용
+  iam:
+    role: arn:aws:iam::533267056938:role/github-actions-ci
+  oidc:
+    provider: https://token.actions.githubusercontent.com
